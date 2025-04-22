@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Подключение Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
+        }
+        header {
+            background: #0088cc;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        main {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>{{.Title}}</h1>
+</header>
+<main>
+    <p>Это веб‑приложение, запущенное внутри Telegram!</p>
+    <!-- Пример вызова отправки данных обратно в бота -->
+    <button onclick="sendData()">Отправить данные боту</button>
+</main>
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    function sendData() {
+        // Отправляем строку боту (этот вызов передаст данные в поле WebAppData)
+        tg.sendData("Данные с веб приложения");
+        // После отправки можно закрыть веб-приложение:
+        // tg.close();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Выбор дня расписания</title>
+</head>
+<body>
+<h1>Выбран преподаватель: {{.Teacher.FullName}}</h1>
+<p>Выберите день для просмотра расписания:</p>
+<ul>
+    <li><a href="/schedule?teacher_id={{.Teacher.ID}}&day=сегодня">Расписание на сегодня</a></li>
+    <li><a href="/schedule?teacher_id={{.Teacher.ID}}&day=Понедельник">Понедельник</a></li>
+    <li><a href="/schedule?teacher_id={{.Teacher.ID}}&day=Вторник">Вторник</a></li>
+    <li><a href="/schedule?teacher_id={{.Teacher.ID}}&day=Среда">Среда</a></li>
+    <li><a href="/schedule?teacher_id={{.Teacher.ID}}&day=Четверг">Четверг</a></li>
+    <li><a href="/schedule?teacher_id={{.Teacher.ID}}&day=Пятница">Пятница</a></li>
+    <li><a href="/schedule?teacher_id={{.Teacher.ID}}&day=Суббота">Суббота</a></li>
+    <li><a href="/schedule?teacher_id={{.Teacher.ID}}&day=Воскресенье">Воскресенье</a></li>
+</ul>
+<a href="/">Вернуться к поиску</a>
+</body>
+</html>

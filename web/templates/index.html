@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Расписание преподавателя</title>
+    <!-- Подключение шрифта Google Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Сброс базовых стилей */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f6f9fc, #e9eff5);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #4a90e2, #0077b5);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.5rem;
+            position: relative;
+        }
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.4);
+        }
+        #teacher-info {
+            background: #f2f6fa;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .day-buttons {
+            display: flex;
+            overflow-x: auto;
+            padding: 15px;
+            background: #fafafa;
+        }
+        .day-buttons button {
+            flex: 0 0 auto;
+            margin-right: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            background: #e0e0e0;
+            color: #333;
+            font-weight: 500;
+            transition: background 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+        .day-buttons button:hover {
+            background: #d0d0d0;
+        }
+        .day-buttons button.active {
+            background: #0077b5;
+            color: #fff;
+            transform: scale(1.05);
+        }
+        /* Стилизация полосы прокрутки для блока кнопок */
+        .day-buttons::-webkit-scrollbar {
+            height: 6px;
+        }
+        .day-buttons::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+        .day-buttons::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #schedule {
+            padding: 20px;
+        }
+        .subject {
+            background: #f9fbfd;
+            border-left: 5px solid #0077b5;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .subject:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .subject p {
+            line-height: 1.5;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        .subject p strong {
+            font-weight: 500;
+            color: #0077b5;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        Расписание преподавателя
+    </header>
+    <div id="teacher-info">
+        <p><strong>ID преподавателя: </strong><span id="teacher-id"></span></p>
+    </div>
+    <div class="day-buttons">
+        <button onclick="loadSchedule('понедельник', this)">Понедельник</button>
+        <button onclick="loadSchedule('вторник', this)">Вторник</button>
+        <button onclick="loadSchedule('среда', this)">Среда</button>
+        <button onclick="loadSchedule('четверг', this)">Четверг</button>
+        <button onclick="loadSchedule('пятница', this)">Пятница</button>
+        <button onclick="loadSchedule('суббота', this)">Суббота</button>
+        <button onclick="loadSchedule('воскресенье', this)">Воскресенье</button>
+    </div>
+    <div id="schedule">
+        <p style="text-align:center; color:#666;">Выберите день для отображения расписания</p>
+    </div>
+</div>
+<script>
+    // Получение параметра 'id' из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const teacherId = urlParams.get('id');
+    document.getElementById('teacher-id').innerText = teacherId ? teacherId : 'Не указан';
+
+    // Функция для загрузки расписания по выбранному дню и выделения активной кнопки
+    function loadSchedule(day, btn) {
+        if (!teacherId) {
+            alert("Параметр id преподавателя отсутствует в URL");
+            return;
+        }
+        // Сброс активного состояния у всех кнопок
+        document.querySelectorAll('.day-buttons button').forEach(button => {
+            button.classList.remove('active');
+        });
+        // Устанавливаем активное состояние для нажатой кнопки
+        btn.classList.add('active');
+
+        // Запрос расписания через API
+        fetch(`/api/schedule?teacher_id=${teacherId}&day=${day}`)
+            .then(response => response.json())
+            .then(data => {
+                const scheduleDiv = document.getElementById('schedule');
+                scheduleDiv.innerHTML = '';
+                if (!data.subjects || data.subjects.length === 0) {
+                    scheduleDiv.innerHTML = `<p style="text-align:center; color:#666;">Нет занятий на ${day}.</p>`;
+                    return;
+                }
+                data.subjects.forEach(function(subject) {
+                    const subjectDiv = document.createElement('div');
+                    subjectDiv.className = 'subject';
+                    subjectDiv.innerHTML = `
+                        <p><strong>Предмет:</strong> ${subject.subject_name}</p>
+                        <p><strong>Время:</strong> ${subject.total_time_schedule}</p>
+                        <p><strong>Аудитория:</strong> ${subject.num_auditorium_schedule}</p>
+                        <p><strong>Здание:</strong> ${subject.building_name}</p>
+                        <p><strong>Группа:</strong> ${subject.group_list}</p>
+                        <p><strong>Преподаватель:</strong> ${subject.teacher_lastname} ${subject.teacher_firstname} ${subject.teacher_middlename}</p>
+                    `;
+                    scheduleDiv.appendChild(subjectDiv);
+                });
+
+            })
+            .catch(error => {
+                console.error('Ошибка при получении расписания:', error);
+            });
+    }
+</script>
+</body>
+</html>

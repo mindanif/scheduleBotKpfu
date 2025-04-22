@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Результаты поиска</title>
+</head>
+<body>
+<h1>Результаты поиска для "{{.FullName}}"</h1>
+{{if .Matches}}
+<ul>
+    {{range .Matches}}
+    <li>
+        <a href="/select?teacher_id={{.ID}}">{{.FullName}}</a>
+    </li>
+    {{end}}
+</ul>
+{{else}}
+<p>Совпадений не найдено. Попробуйте ввести другое ФИО.</p>
+{{end}}
+<a href="/">Новый поиск</a>
+</body>
+</html>

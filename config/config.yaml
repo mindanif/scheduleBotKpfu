@@ -1,0 +1,4 @@
+telegram_token:
+kampus_api_base_url: "https://api.campus.dewish.ru/v3"
+teacher_api_url: "https://api.campus.dewish.ru/v3/organizations/5f8692136da69409bce8f28f/entities?type=Teacher"
+kfu_api_base_url: "https://auth.kpfu.tyuop.ru/api/v1"
